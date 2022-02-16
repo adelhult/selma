@@ -1,5 +1,5 @@
 # Selma
-Selma is simple text editor that uses my own, human friendly, markup language [λnote](https://www.github.com). This software is written in React and Rust and built on the Monaco editor (the same that VS Code uses).
+Selma is simple text editor and note taking app that uses my own, human friendly, markup language [λnote](https://www.github.com/adelhult/lambda-note). This software is written in React and Rust and built on the Monaco editor (the same that VS Code uses).
 
 ![banner](banner.png)
 
