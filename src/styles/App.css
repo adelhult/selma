@@ -1,0 +1,20 @@
+.App {
+  position: relative;
+  margin:0;
+  padding:0;
+  top:30px;
+  width:100%;
+  height:calc(100vh - 30px);
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column;
+  overflow-y: hidden;
+}
+
+.App .Menu {
+  flex: 0 1 auto;
+}
+
+.App .Workbench {
+  flex: 1 1 auto;
+}
