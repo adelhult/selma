@@ -2,30 +2,16 @@ import { Component } from 'react';
 import { open, save } from '@tauri-apps/api/dialog';
 import Workbench from './Workbench.js';
 import './styles/App.css';
-import { createDir, readTextFile, writeFile } from '@tauri-apps/api/fs';
+import { getConfig, saveConfig } from './config.js';
+import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 import { appWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api';
-import { appDir } from "@tauri-apps/api/path";
 import Menu from "./Menu.js";
 import HotkeyHandler from "./HotkeyHandler.js";
 
 class App extends Component {
 	constructor(props) {
 		super(props)
-
-		this.state = {
-			viewMode: "split",
-			focusMode: false,
-			filename: null,
-			debug: false,
-			safeMode: false,
-			previewSourceText: "",
-			currentSourceText: "",
-			readSourceText: "",
-			unseenChanges: 0,
-			unsavedChanges: 0,
-		};
-
 		this.actions = {
 			"onNew": this.handleNewFile.bind(this),
 			"onOpen": this.handleOpenFile.bind(this),
@@ -36,6 +22,33 @@ class App extends Component {
 			"onUpdate": this.updatePreview.bind(this),
 			"onViewToggle": this.toggleViewMode.bind(this),
 		};
+
+		this.state = {
+			loaded: false,
+		};	
+	}
+
+	componentDidMount() {
+		document
+			.getElementById('titlebar-minimize')
+			.addEventListener('click', () => appWindow.minimize())
+		document
+			.getElementById('titlebar-maximize')
+			.addEventListener('click', () => appWindow.toggleMaximize())
+		document
+			.getElementById('titlebar-close')
+			.addEventListener('click', () => {
+				// when to program is closed, store the state in the conf file first
+				saveConfig(this.state).then(() => appWindow.close());
+			})
+
+		// get the config and stores it as the current state
+		getConfig().then(config => {
+			this.setState(config)
+		});
+		
+		
+		
 	}
 
 	handleEditorChange(value, event) {
@@ -145,25 +158,6 @@ class App extends Component {
 		this.setState({ filename: null, readSourceText: "", unseenChanges: 0 });
 	}
 
-	componentDidMount() {
-		document
-			.getElementById('titlebar-minimize')
-			.addEventListener('click', () => appWindow.minimize())
-		document
-			.getElementById('titlebar-maximize')
-			.addEventListener('click', () => appWindow.toggleMaximize())
-		document
-			.getElementById('titlebar-close')
-			.addEventListener('click', () => appWindow.close())
-
-		// create the config dir if need be and store the path in state
-		appDir()
-			.then(dir => {
-				createDir(dir, { recursive: true });
-				this.setState({ configDir: dir });
-			});
-	}
-
 	componentDidUpdate(prevProps, prevState) {
 		// When we read a new source text we need to update the currentSourceText
 		// and the previewSourceText
@@ -186,27 +180,27 @@ class App extends Component {
 		return <>
 			<div 
 				data-tauri-drag-region 
-				class="titlebar" 
-				style={{ background: this.state.focusMode ? "white" : "#f9f5f1" }}
+				className="titlebar" 
+				style={{ background: this?.state?.focusMode ? "white" : "#f9f5f1" }}
 			>
 				<div>
 					<div className="titlebar-button" onClick={this.toggleFocusMode.bind(this)}>
-						<span className="material-icons-outlined">{this.state.focusMode ? "expand_more" : "expand_less"}</span>
+						<span className="material-icons-outlined">{this?.state?.focusMode ? "expand_more" : "expand_less"}</span>
 					</div>
 					<div className="titlebar-button" onClick={() => alert("todo")}>
 						<span className="material-icons-outlined">help_outline</span>
 					</div>
 					<div
-						className={"titlebar-button" + (this.state.safeMode ? " active" : "")}
+						className={"titlebar-button" + (this?.state?.safeMode ? " active" : "")}
 						onClick={() => this.setState({ safeMode: !this.state.safeMode })}
 					>
 						<span className="material-icons-outlined">
-							{this.state.safeMode ? "lock" : "lock_open"}
+							{this?.state?.safeMode ? "lock" : "lock_open"}
 						</span>
 					</div>
 				</div>
 				<div className="filename">
-					{(this.state.filename?.split(/[/\\]/)?.pop() ?? "unsaved file") + (this.state.unsavedChanges > 0 ? "*" : "")}
+					{(this?.state?.filename?.split(/[/\\]/)?.pop() ?? "unsaved file") + (this?.state?.unsavedChanges > 0 ? "*" : "")}
 				</div>
 				<div>
 					<div className="titlebar-button" id="titlebar-minimize">
@@ -220,7 +214,7 @@ class App extends Component {
 					</div>
 				</div>
 			</div>
-			<div className="App">
+			{this.state.loaded ? <div className="App">
 				<HotkeyHandler actions={this.actions} />
 				{!this.state.focusMode &&
 					<Menu
@@ -248,7 +242,7 @@ class App extends Component {
 					mode={this.state.viewMode}
 					configDir={this.state.configDir}
 				/>
-			</div>
+			</div> : null}
 		</>;
 	}
 }
