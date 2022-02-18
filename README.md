@@ -21,5 +21,5 @@ npm run tauri build
 - [ ] Hover suggestions
 - [ ] File tree
 - [ ] Settings menu
-- [ ] Remember the previous opened file etc.
+- [x] Remember the previous opened file etc.
 - [ ] Nicer GUI
