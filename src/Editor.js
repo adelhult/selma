@@ -130,7 +130,7 @@ export default function Editor(props) {
             theme="myCoolTheme"
             defaultValue={props.readSource ?? ""}
             language="lambdanote"
-            beforeMount={configureEditor}
+            beforeMount={monaco => configureEditor(monaco, props.extensionsInfoRef)}
             onChange={props.onChange}
             onMount={handleEditorDidMount}
             options={{

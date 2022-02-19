@@ -21,14 +21,17 @@ export default function Preview(props) {
         if (!props.configDir) return;
 
         invoke('translate_preview', { 
-            'source': props.source, 
+            'source': props.source ?? "", 
             'filepath': preview_filepath,
             'safe': props.safeMode ?? true,
         })
-            .then((output) => {
+            .then(output => {
+                let issues = output[0];
+                props.setExtensionsInfo(output[1]);
+
                 // store the output in the state
-                setErrors(output.errors);
-                setWarnings(output.warnings);
+                setErrors(issues.errors);
+                setWarnings(issues.warnings);
                 // and reload the iframe
                 console.log("reloading preview")
                 // since I don't want to reset the scroll position I need to use the **reload** method

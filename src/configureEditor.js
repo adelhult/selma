@@ -1,5 +1,44 @@
-export default function getConfig(monaco) {
+const getHoverMsg = e => `
+#### ${e.canonical_name} extension
+${e.nickname.toUpperCase() != e.canonical_name.toUpperCase() ?
+    `**(aliased as "${e.nickname}")**` : ''}
+
+${e.description}
+
+
+#### Expression types
+Supports
+${e.supports_block ? "**block**" : ""}
+${e.supports_inline && e.supports_block ? "and" : ""}
+${e.supports_inline ? "**inline**" : ""}
+expression.
+
+#### Safe mode
+${e.is_safe ? "Trusted" : "**Not trusted**"} in safe mode.
+
+#### Metadata interests
+${e.interests.length > 0 ? "" : "No interest in any metadata fields"}
+${e.interests.map(m => `- \`${m}\``).join("\n")}
+`;
+
+export default function getConfig(monaco, extensionsInfoRef) {
     monaco.languages.register({ id: 'lambdanote' });
+
+    monaco.languages.registerHoverProvider('lambdanote', {
+        provideHover: function (model, position) {
+            const word = model.getWordAtPosition(position).word;
+            const extensions = extensionsInfoRef.current;
+            const extension = extensions.find(e => e.nickname == word);
+            if (!extension) return {};
+            console.log(extension);
+            return {
+                contents: [
+                    { value: getHoverMsg(extension) }
+                ]
+            };
+        }
+    });
+
     monaco.languages.registerCompletionItemProvider('lambdanote', {
         provideCompletionItems: function (model, position) {
             // find out if we are completing a property in the 'dependencies' object.

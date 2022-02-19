@@ -2,6 +2,7 @@ import Editor from "./Editor.js";
 import Preview from "./Preview.js";
 import "./styles/Workbench.css"
 import Split from 'react-split'
+import { useState, useRef } from "react";
 
 /**
  * The main display area which holds the editor and the preview panel. This is the part of the program
@@ -10,11 +11,14 @@ import Split from 'react-split'
  * This component is also responsible for loading the content of the given file (props.filename).
 */
 export default function Workbench(props) {
+    const extensionsInfoRef = useRef([]);
+    const setExtensionsInfo = (info) => extensionsInfoRef.current = info;
     return <div className="Workbench">
         {
             props.mode === "editor" ?
                 <div className="full">
                     <Editor
+                        extensionsInfoRef={extensionsInfoRef}
                         actions={props.actions}
                         onChange={props.onEditorChange}
                         readSource={props.readSource}
@@ -24,6 +28,7 @@ export default function Workbench(props) {
                 : props.mode === "preview" ?
                     <div className="full">
                         <Preview
+                            setExtensionsInfo={setExtensionsInfo}
                             safeMode={props.safeMode}
                             filename={props.filename}
                             configDir={props.configDir}
@@ -38,6 +43,7 @@ export default function Workbench(props) {
                         dragInterval={1}
                     >
                         <Editor
+                            extensionsInfoRef={extensionsInfoRef}
                             actions={props.actions}
                             onChange={props.onEditorChange}
                             readSource={props.readSource}
@@ -45,6 +51,7 @@ export default function Workbench(props) {
                         />
                         <div className="previewContainer">
                             <Preview
+                                setExtensionsInfo={setExtensionsInfo}
                                 safeMode={props.safeMode}
                                 filename={props.filename}
                                 configDir={props.configDir}

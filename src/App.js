@@ -24,6 +24,7 @@ class App extends Component {
 		};
 
 		this.state = {
+			extensionsInfo: [],
 			loaded: false,
 		};	
 	}

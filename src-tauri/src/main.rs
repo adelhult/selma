@@ -6,12 +6,11 @@
 use lambda_note_lib::{DocumentState, Html, Latex, Translator, WebPreview};
 use rouille::{start_server, Response};
 use std::fs::File;
-use std::path::PathBuf;
-use std::thread;
 use std::{
+  thread,
   fs,
   io::Write,
-  path::Path,
+  path::{Path, PathBuf},
   process::{Command, Stdio},
 };
 use tauri::command;
@@ -31,7 +30,20 @@ pub struct Issues {
   errors: Vec<String>,
 }
 
-fn translate_str<T: Translator + 'static>(source: &str, translator: T, safe: bool) -> (String, Issues) {
+#[derive(serde::Serialize)]
+pub struct ExtensionInfo {
+  nickname: String,
+  canonical_name: String,
+  description: String,
+  version: String,
+  is_safe: bool,
+  supports_block: bool,
+  supports_inline: bool,
+  interests: Vec<String>,
+}
+
+
+fn translate_str<T: Translator + 'static>(source: &str, translator: T, safe: bool) -> (String, DocumentState) {
   let mut doc = DocumentState::new(translator);
   doc.set_safe_mode(safe);
   let result = doc.translate(source, "preview");
@@ -42,13 +54,7 @@ fn translate_str<T: Translator + 'static>(source: &str, translator: T, safe: boo
     doc.warnings.join("\n")
   );
 
-  (
-    result,
-    Issues {
-      errors: doc.errors,
-      warnings: doc.warnings,
-    },
-  )
+  (result, doc)
 }
 
 /// Invoke pandoc to translate between two formats
@@ -73,15 +79,42 @@ fn pandoc(tex_source: &str, output_file: &Path) {
   }
 }
 
+
+fn get_extension_info(doc: &DocumentState) -> Vec<ExtensionInfo> {
+  doc.extensions
+    .iter()
+    .map(|(name, extension)| {
+      ExtensionInfo {
+        nickname: name.clone(),
+        canonical_name: extension.name(),
+        description: extension.description(),
+        version: extension.version(),
+        is_safe: extension.is_safe(),
+        supports_block: extension.supports_block(),
+        supports_inline: extension.supports_inline(),
+        interests: extension.interests(),
+      }
+    })
+    .collect()
+}
+
 #[command]
-fn translate_preview(source: &str, filepath: &str, safe: bool) -> Issues {
-  let (output, mut issues) = translate_str(source, WebPreview::new(), safe);
+fn translate_preview(source: &str, filepath: &str, safe: bool) -> (Issues, Vec<ExtensionInfo>) {
+  let (output, doc) = translate_str(source, WebPreview::new(), safe);
+  let extensions_info = get_extension_info(&doc);
+
+  let mut issues = Issues {
+    errors: doc.errors,
+    warnings: doc.warnings,
+  };
+
   if let Err(error) = fs::write(&Path::new(filepath), output) {
     issues
       .errors
       .push(format!("Failed to write to the preview file: {}", error))
   }
-  issues
+
+  (issues, extensions_info)
 }
 
 #[command]
