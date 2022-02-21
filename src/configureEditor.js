@@ -5,7 +5,6 @@ ${e.nickname.toUpperCase() != e.canonical_name.toUpperCase() ?
 
 ${e.description}
 
-
 #### Expression types
 Supports
 ${e.supports_block ? "**block**" : ""}
@@ -30,7 +29,6 @@ export default function getConfig(monaco, extensionsInfoRef) {
             const extensions = extensionsInfoRef.current;
             const extension = extensions.find(e => e.nickname == word);
             if (!extension) return {};
-            console.log(extension);
             return {
                 contents: [
                     { value: getHoverMsg(extension) }

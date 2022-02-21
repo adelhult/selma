@@ -183,6 +183,21 @@ fn start_preview() {
   });
 }
 
+#[command]
+fn read_file(path: &str) -> Option<String> {
+  fs::read_to_string(path).ok()
+}
+
+#[command]
+fn write_file(path: &str, contents: &str) -> bool {
+  fs::write(path, contents).is_ok()
+}
+
+#[command]
+fn create_dir(path: &str) -> bool {
+  fs::create_dir_all(path).is_ok()
+}
+
 fn main() {
   thread::spawn(start_preview);
   tauri::Builder::default()
@@ -191,7 +206,7 @@ fn main() {
       window.set_shadow(true);
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![export, translate_preview])
+    .invoke_handler(tauri::generate_handler![read_file, write_file, export, translate_preview, create_dir])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

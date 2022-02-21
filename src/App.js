@@ -3,7 +3,6 @@ import { open, save } from '@tauri-apps/api/dialog';
 import Workbench from './Workbench.js';
 import './styles/App.css';
 import { getConfig, saveConfig } from './config.js';
-import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 import { appWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api';
 import Menu from "./Menu.js";
@@ -93,16 +92,16 @@ class App extends Component {
 	}
 
 	readFile(path) {
-		readTextFile(path)
+		invoke('read_file', {"path": path})
 			.then(text => {
-				// Reset contents first to ensure that the useEffect hook 
+				//Reset contents first to ensure that the useEffect hook 
 				// will be triggered even if the current readSourceText
 				// is the same as the new text
+				console.log(text);
 				this.setState({ readSourceText: "" });
 				this.setState({ readSourceText: text });
 			})
-			.catch(console.error);
-
+			.catch(console.error)
 	}
 
 	handleOpenFile(event) {
@@ -140,7 +139,8 @@ class App extends Component {
 		}
 		this.setState({ unsavedChanges: 0 });
 		this.updatePreview();
-		writeFile({ contents: this.state.currentSourceText, path: this.state.filename });
+		invoke("write_file", {path: this.state.filename, contents: this.state.currentSourceText})
+			.then(error => error && console.log("Failed to write file"))
 	}
 
 	handleSaveAsFile(event) {
@@ -151,7 +151,8 @@ class App extends Component {
 			.then(savefilePath => {
 				this.setState({ filename: savefilePath, unsavedChanges: 0 });
 				this.updatePreview();
-				writeFile({ contents: this.state.currentSourceText, path: savefilePath })
+				invoke("write_file", {path: savefilePath, contents: this.state.currentSourceText})
+					.then(error => error && console.log("Failed to write file"))
 			})
 	}
 

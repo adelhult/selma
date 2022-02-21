@@ -1,5 +1,5 @@
 import { appDir } from "@tauri-apps/api/path";
-import { createDir, writeFile, readTextFile } from '@tauri-apps/api/fs';
+import { invoke } from '@tauri-apps/api';
 
 const defaultConfig = {
     viewMode: "split",
@@ -13,17 +13,17 @@ export async function getConfig() {
     const dir = await appDir();
     let config = defaultConfig;
 
-    console.log("config dir:" + dir);
-    await createDir(dir, { recursive: true });
+    await invoke("create_dir", {path: dir});
     try {
-        const rawFile = await readTextFile(dir + "/config.json");
+        const rawFile = await invoke("read_file", {path: dir + "/config.json"});
         config = JSON.parse(rawFile);
     } catch {   
         // if we failed to read or parse the config file, create a new default
-        writeFile({
+        invoke("write_file", {
             path: dir + "/config.json",
             contents: JSON.stringify(defaultConfig, null, 2)});
     }
+    
     config.configDir = dir;
     config.loaded = true;
     config.previewSourceText =  "";
@@ -33,7 +33,7 @@ export async function getConfig() {
 
     // set the read source text field if we previously had a file open
     if (config.filename) {
-        config.readSourceText = await readTextFile(config.filename);
+        config.readSourceText = await invoke("read_file", {path: config.filename});
     } else {
         config.currentSourceText = "";
     }
@@ -50,8 +50,8 @@ export async function saveConfig(state) {
         debug: state.debug,
         safeMode: state.safeMode,
     };
-    
-    await writeFile({
+
+    await invoke("write_file", {
         path: state.configDir + "/config.json",
         contents: JSON.stringify(config, null, 2)});
 }
