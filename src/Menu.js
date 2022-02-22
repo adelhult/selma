@@ -13,10 +13,6 @@ export default function Menu(props) {
                 <button onClick={props.actions.onSaveAs}>📑 Save As</button>
                 <button onClick={props.actions.onExport}>🚀 Export</button>
                 <button onClick={setSettingsOpen}>⚙️ Settings</button>
-                {
-                    props.unseenChanges > 0 && props.viewMode !== "editor" &&
-                    <button onClick={props.actions.onUpdate}>🔃 Update preview</button>
-                }
             </div>
             <div className="viewModeActions">
                 <button
@@ -37,32 +33,5 @@ export default function Menu(props) {
             </div>
         </nav>
         {settingsOpen && <Settings />}
-        {props.debug &&
-            <div className="debugger">
-                <div>
-                    <strong>General</strong>
-                    <ul>
-                        <li>filename: {props.filename}</li>
-                        <li>props.viewMode: {props.viewMode}</li>
-                        <li>unseenChanges: {props.unseenChanges}</li>
-                    </ul>
-                </div>
-                <div>
-                <strong>Current source text</strong><br />
-                {props.currentSourceText.slice(0, 150)}
-                {props.currentSourceText.length > 150 && '...'}
-            </div>
-            <div>
-                <strong>Read source text</strong><br />
-                {props.readSourceText.slice(0, 150)}
-                {props.readSourceText.length > 150 && '...'}
-            </div>
-            <div>
-                <strong>Preview source text</strong><br />
-                {props.previewSourceText.slice(0, 150)}
-                {props.previewSourceText.length > 150 && '...'}
-            </div>
-            </div>
-        }
     </div>
 }

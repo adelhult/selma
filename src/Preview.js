@@ -33,7 +33,6 @@ export default function Preview(props) {
                 setErrors(issues.errors);
                 setWarnings(issues.warnings);
                 // and reload the iframe
-                console.log("reloading preview")
                 // since I don't want to reset the scroll position I need to use the **reload** method
                 // which we sadly are not able to access due to cross origin issues. 
                 // To solve this we use the postMessage API

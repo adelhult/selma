@@ -11,6 +11,7 @@ const defaultConfig = {
 
 export async function getConfig() {
     const dir = await appDir();
+    
     let config = defaultConfig;
 
     await invoke("create_dir", {path: dir});
@@ -26,11 +27,7 @@ export async function getConfig() {
     
     config.configDir = dir;
     config.loaded = true;
-    config.previewSourceText =  "";
-    config.readSourceText =  "";
-    config.unseenChanges = 0;
-    config.unsavedChanges = 0;
-
+    
     // set the read source text field if we previously had a file open
     if (config.filename) {
         config.readSourceText = await invoke("read_file", {path: config.filename});

@@ -39,7 +39,7 @@ export default function Editor(props) {
             keybindingContext: null,
             contextMenuGroupId: 'preview',
             contextMenuOrder: 1,
-            run: props.actions.onUpdate
+            run: props.onUpdate
         });
 
         editor.addAction({
@@ -104,21 +104,20 @@ export default function Editor(props) {
         // here is another way to get monaco instance
         // you can also store it in `useRef` for further usage
         editorRef.current = editor;
+        editor.focus();
 
         // recover the current state (this will happen if we switch from
         // editor to preview and then back to editor)
-        if (props.currentSource) {
-            editor.getModel().setValue(props.currentSource);
+        if (props.currentSourceRef?.current) {
+            editor.getModel().setValue(props.currentSourceRef.current);
         }
-
-
     }
 
     // Update/set the content of the editor state based on the provided source text.
     // this function will be called when a new file is loaded.
     useEffect(() => {
         if (editorRef.current != null) {
-            editorRef.current.getModel().setValue(props.readSource ?? "");
+            editorRef.current.getModel().setValue(props.readSource);
         }
         
     }, [props.readSource, editorRef]);
@@ -128,7 +127,7 @@ export default function Editor(props) {
             height="100%"
             width="100%"
             theme="myCoolTheme"
-            defaultValue={props.readSource ?? ""}
+            defaultValue={props.readSource}
             language="lambdanote"
             beforeMount={monaco => configureEditor(monaco, props.extensionsInfoRef)}
             onChange={props.onChange}

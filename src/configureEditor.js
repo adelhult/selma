@@ -26,8 +26,7 @@ export default function getConfig(monaco, extensionsInfoRef) {
     monaco.languages.registerHoverProvider('lambdanote', {
         provideHover: function (model, position) {
             const word = model.getWordAtPosition(position).word;
-            const extensions = extensionsInfoRef.current;
-            const extension = extensions.find(e => e.nickname == word);
+            const extension = extensionsInfoRef.current.find(e => e.nickname == word);
             if (!extension) return {};
             return {
                 contents: [
@@ -50,7 +49,7 @@ export default function getConfig(monaco, extensionsInfoRef) {
             let line = model.getLineContent(position.lineNumber);
                 
             var word = model.getWordUntilPosition(position);
-            console.log(word);
+
             var range = {
                 startLineNumber: position.lineNumber,
                 endLineNumber: position.lineNumber,

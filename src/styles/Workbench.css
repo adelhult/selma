@@ -37,3 +37,18 @@
     display: flex;
     align-items: stretch;
 }
+
+
+.Workbench .actions {
+    right: 0.5rem;
+    top:0.5rem;
+    position: absolute;
+}
+
+.Workbench .actions button {
+    padding:0.4rem;
+    font-size:0.9rem;
+    background:none;
+    border:none;
+}
+
