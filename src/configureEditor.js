@@ -39,6 +39,8 @@ export default function getConfig(monaco, extensionsInfoRef) {
     monaco.languages.registerCompletionItemProvider('lambdanote', {
         provideCompletionItems: function (model, position) {
             const extensions = extensionsInfoRef.current;
+       
+            var word = model.getWordUntilPosition(position);
 
             var range = {
                 startLineNumber: position.lineNumber,
