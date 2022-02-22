@@ -107,6 +107,7 @@ class App extends Component {
 			filters: [{ name: 'Lambda note', extensions: ['ln'] }]
 		})
 			.then(path => {
+				if (!path) return;
 				this.setState({ filename: path, unsavedChanges: -1, unseenChanges: 1 });
 			})
 			.catch(console.error);
@@ -136,9 +137,15 @@ class App extends Component {
 			this.handleSaveAsFile(event);
 			return;
 		}
-		this.setState({ unsavedChanges: 0 });
+		
 		invoke("write_file", { path: this.state.filename, contents: this.sourceRef.current })
-			.then(ok => !ok && console.log("Failed to write file"))
+			.then(ok => {
+				if (!ok) {
+					console.log("Failed to write file");
+					return;
+				}
+				this.setState({unsavedChanges: 0 });
+			})
 	}
 
 	handleSaveAsFile(event) {
@@ -147,6 +154,7 @@ class App extends Component {
 			filters: [{ name: 'Lambda note', extensions: ['ln'] }]
 		})
 			.then(savefilePath => {
+				if (!savefilePath) return;
 				this.setState({ filename: savefilePath, unsavedChanges: 0 });
 				invoke("write_file", { path: savefilePath, contents: this.sourceRef.current })
 					.then(ok => !ok && console.log("Failed to write file"))
