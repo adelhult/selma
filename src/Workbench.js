@@ -32,6 +32,7 @@ export default function Workbench(props) {
         // we created a new empty file
         if (!props.filename) {
             setReadSource("");
+            return;
         }
         
         invoke('read_file', {"path": props.filename})
