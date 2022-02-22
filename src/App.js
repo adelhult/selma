@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { open, save } from '@tauri-apps/api/dialog';
 import Workbench from './Workbench.js';
-import './styles/App.css';
-import { getConfig, saveConfig } from './config.js';
+import { getConfig, saveConfig, getGuidePath } from './config.js';
 import { appWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api';
 import Menu from "./Menu.js";
+import Help from "./Help.js";
+import './styles/App.css';
 
 class App extends Component {
 	constructor(props) {
@@ -25,10 +26,10 @@ class App extends Component {
 			unseenChanges: 0,
 			unsavedChanges: 0,
 			loaded: false,
-		};	
+		};
 
 		this.sourceRef = React.createRef();
-		this.sourceRef.current = ""; 
+		this.sourceRef.current = "";
 	}
 
 	componentDidMount() {
@@ -49,9 +50,6 @@ class App extends Component {
 		getConfig().then(config => {
 			this.setState(config)
 		});
-		
-		
-		
 	}
 
 	handleEditorChange(value, event) {
@@ -60,6 +58,10 @@ class App extends Component {
 			unseenChanges: this.state.unseenChanges + 1,
 			unsavedChanges: this.state.unsavedChanges + 1,
 		});
+	}
+
+	shouldMenusBeHidden() {
+		return this.state?.focusMode || this.state?.showHelp;
 	}
 
 	toggleFocusMode(e) {
@@ -72,6 +74,23 @@ class App extends Component {
 		// are only available when the editor is present.
 		const currentIndex = viewModes.indexOf(this.state.viewMode);
 		this.setState({ viewMode: viewModes[(currentIndex + 1) % viewModes.length] });
+	}
+
+	toggleHelp() {
+		this.setState({ showHelp: !this.state.showHelp });
+	}
+
+	openGuide() {
+		getGuidePath()
+			.then(path => {
+				this.setState({
+					filename: path,
+					showHelp: false,
+					focusMode: true,
+					viewMode: "preview"
+				});
+		})
+		
 	}
 
 	setViewMode(viewMode) {
@@ -118,7 +137,7 @@ class App extends Component {
 			return;
 		}
 		this.setState({ unsavedChanges: 0 });
-		invoke("write_file", {path: this.state.filename, contents: this.sourceRef.current})
+		invoke("write_file", { path: this.state.filename, contents: this.sourceRef.current })
 			.then(ok => !ok && console.log("Failed to write file"))
 	}
 
@@ -129,7 +148,7 @@ class App extends Component {
 		})
 			.then(savefilePath => {
 				this.setState({ filename: savefilePath, unsavedChanges: 0 });
-				invoke("write_file", {path: savefilePath, contents: this.sourceRef.current})
+				invoke("write_file", { path: savefilePath, contents: this.sourceRef.current })
 					.then(ok => !ok && console.log("Failed to write file"))
 			})
 	}
@@ -141,20 +160,20 @@ class App extends Component {
 
 	render() {
 		return <>
-			<div 
-				data-tauri-drag-region 
-				className="titlebar" 
-				style={{ background: this?.state?.focusMode ? "white" : "#f9f5f1" }}
+			<div
+				data-tauri-drag-region
+				className="titlebar"
+				style={{ background: this.shouldMenusBeHidden() ? "white" : "#f9f5f1" }}
 			>
 				<div>
 					<div className="titlebar-button" onClick={this.toggleFocusMode.bind(this)}>
-						<span className="material-icons-outlined">{this?.state?.focusMode ? "expand_more" : "expand_less"}</span>
+						<span className="material-icons-outlined">{this.shouldMenusBeHidden() ? "expand_more" : "expand_less"}</span>
 					</div>
-					<div className="titlebar-button" onClick={() => alert("todo")}>
+					<div className={"titlebar-button" + (this?.state?.showHelp ? " active" : "")} onClick={this.toggleHelp.bind(this)}>
 						<span className="material-icons-outlined">help_outline</span>
 					</div>
 					<div
-						className={"titlebar-button" + (this?.state?.safeMode ? " active" : "")}
+						className={"titlebar-button" + (this?.state?.safeMode ? " safe" : "")}
 						onClick={() => this.setState({ safeMode: !this.state.safeMode })}
 					>
 						<span className="material-icons-outlined">
@@ -163,22 +182,26 @@ class App extends Component {
 					</div>
 				</div>
 				<div className="filename">
-					{(this?.state?.filename?.split(/[/\\]/)?.pop() ?? "unsaved file") + (this?.state?.unsavedChanges > 0 ? "*" : "")}
+					{
+						!this.shouldMenusBeHidden() &&
+						(this?.state?.filename?.split(/[/\\]/)?.pop() ?? "unsaved file") +
+						(this?.state?.unsavedChanges > 0 ? "*" : "")
+					}
 				</div>
 				<div>
 					<div className="titlebar-button" id="titlebar-minimize">
 						<span className="material-icons-outlined">remove</span>
 					</div>
-					<div class="titlebar-button" id="titlebar-maximize">
+					<div className="titlebar-button" id="titlebar-maximize">
 						<span className="material-icons-outlined">crop_square</span>
 					</div>
-					<div class="titlebar-button exit-button" id="titlebar-close">
+					<div className="titlebar-button exit-button" id="titlebar-close">
 						<span className="material-icons-outlined">close</span>
 					</div>
 				</div>
 			</div>
 			{this.state.loaded ? <div className="App">
-				{!this.state.focusMode &&
+				{!this.shouldMenusBeHidden() &&
 					<Menu
 						filename={this.state.filename}
 						actions={this.actions}
@@ -189,16 +212,30 @@ class App extends Component {
 						unseenChanges={this.state.unseenChanges}
 					/>
 				}
-				<Workbench
-					safeMode={this.state.safeMode}
-					filename={this.state.filename}
-					actions={this.actions}
-					sourceRef={this.sourceRef}
-					onUpdate={this.handleUpdate.bind(this)}
-					onEditorChange={this.handleEditorChange.bind(this)}
-					mode={this.state.viewMode}
-					configDir={this.state.configDir}
-				/>
+				{this.state.showHelp ?
+					<Help 
+						onNew={() => {
+							this.setState({
+								viewMode: "split",
+								focusMode: false,
+								showHelp: false});
+							
+							this.handleNewFile();
+						}}
+						onGuide={this.openGuide.bind(this)}
+					/>
+
+					: <Workbench
+						safeMode={this.state.safeMode}
+						filename={this.state.filename}
+						actions={this.actions}
+						sourceRef={this.sourceRef}
+						onUpdate={this.handleUpdate.bind(this)}
+						onEditorChange={this.handleEditorChange.bind(this)}
+						mode={this.state.viewMode}
+						configDir={this.state.configDir}
+					/>
+				}
 			</div> : null}
 		</>;
 	}

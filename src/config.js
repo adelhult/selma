@@ -1,24 +1,32 @@
 import { appDir } from "@tauri-apps/api/path";
 import { invoke } from '@tauri-apps/api';
+import guideText from "./introGuide.js";
 
 const defaultConfig = {
     viewMode: "split",
     focusMode: false,
     filename: null,
     debug: false,
+    showHelp: true,
     safeMode: false,
 };
 
+
 export async function getConfig() {
     const dir = await appDir();
-    
-    let config = defaultConfig;
+    console.log(dir);
+
+    let config = {};
 
     await invoke("create_dir", {path: dir});
     try {
         const rawFile = await invoke("read_file", {path: dir + "/config.json"});
         config = JSON.parse(rawFile);
-    } catch {   
+
+        if (!config) throw new Error("Failed to parse json");
+    
+    } catch (error) {
+        config = defaultConfig;   
         // if we failed to read or parse the config file, create a new default
         invoke("write_file", {
             path: dir + "/config.json",
@@ -46,9 +54,24 @@ export async function saveConfig(state) {
         filename: state.filename,
         debug: state.debug,
         safeMode: state.safeMode,
+        showHelp: state.showHelp,
     };
 
     await invoke("write_file", {
         path: state.configDir + "/config.json",
         contents: JSON.stringify(config, null, 2)});
+}
+
+export async function getGuidePath() {
+    const dir = await appDir();
+    const filename = dir + "/intro_guide.ln";
+
+    let text = await invoke("read_file", {path: filename});
+    if (!text) {
+        // if no guide file exists, create a new one
+        await invoke("write_file", {
+            path: filename,
+            contents: guideText});
+    }
+    return filename;
 }

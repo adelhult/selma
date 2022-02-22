@@ -14,18 +14,22 @@ export default function Preview(props) {
     const preview_filepath = props.configDir + "preview.html";
     const server_url = "http://localhost:5432/";
     const root_dir_path = (props.filename ?? "").split(/[\\/]/).slice(0, -1).join("/");
-    const url_param = root_dir_path ? "?root=" + root_dir_path : "";
+    const url_param = "?root=" + encodeURIComponent(root_dir_path);
     const preview_url = server_url + preview_filepath + url_param;
-
+    const source = props.source;
     useEffect(() => {
         if (!props.configDir) return;
-
+        
+        const frame = document.getElementById("previewFrame");
+        
         invoke('translate_preview', { 
-            'source': props.source ?? "", 
+            'source': source, 
             'filepath': preview_filepath,
             'safe': props.safeMode ?? true,
         })
             .then(output => {
+                console.log("compiled!", props.filename);
+                console.log({filepath: preview_url, source: props.source})
                 let issues = output[0];
                 props.setExtensionsInfo(output[1]);
 
@@ -37,10 +41,10 @@ export default function Preview(props) {
                 // which we sadly are not able to access due to cross origin issues. 
                 // To solve this we use the postMessage API
                 // thanks, https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
-                const frame = document.getElementById("previewFrame");
+                console.log(frame);
                 frame.contentWindow.postMessage("reload", "*")
             });
-    }, [props.source, preview_filepath, props.configDir]);
+    }, [source]);
 
     return props.configDir ? <div className="Preview">
         {(errors.length > 0 || warnings.length > 0) &&

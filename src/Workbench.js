@@ -20,8 +20,9 @@ export default function Workbench(props) {
     const setExtensionsInfo = (info) => extensionsInfoRef.current = info;
     
     const handleUpdate = () => {
-        setPreviewSource(props.sourceRef.current);
+        console.log("handle update");
         props.onUpdate();
+        setPreviewSource(props.sourceRef.current);
     }
 
     let actions = props.actions;
@@ -32,12 +33,19 @@ export default function Workbench(props) {
         // we created a new empty file
         if (!props.filename) {
             setReadSource("");
+            props.sourceRef.current = "";
+            handleUpdate();
             return;
         }
         
         invoke('read_file', {"path": props.filename})
-            .then(setReadSource)
+            .then(text => {
+                setReadSource(text);
+                props.sourceRef.current = text;
+            })
+            .then(handleUpdate)
             .catch(console.error);
+        
     }, [props.filename]);
 
     const editor = <Editor

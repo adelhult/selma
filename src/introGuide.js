@@ -1,9 +1,9 @@
-export default helpText = `# Getting started guide
-This is a short introduction to the  the markup language \lambdanote (lambda note), which is used in this editor. If you are already familiar with Markdown or Org-mode, you will no doubt feel at home.
+const guideText = `# Getting started guide
+This is a short introduction to the  the markup language lambdanote (lambda note), which is used in this editor. If you are already familiar with Markdown or Org-mode, you will no doubt feel at home.
 
-Note: that this intro guide is actually written in \lambdanote so feel free to click the "edit" button in the top right corner to view the source text and play around with it yourself.
+Note: that this intro guide is actually written in lambdanote so feel free to click the "edit" button in the top right corner to view the source text and play around with it yourself.
 
-### Why should I use \lambdanote?
+### Why should I use lambdanote?
 Compared to say Markdown, it is not obvious why you should prefer to use this markup language since they are so familiar. But if you want value the flexibility of having a powerful system…., metadata, more formatting options etc…
 
 ## Text and paragraphs
@@ -18,7 +18,7 @@ is a blank line between them.
 ## Formatting text
 You can add different inline styles to your text. It can  **bold**, //italic//, ~~strikethrough~~, ==under==lined, __sub__scripted, and ^^super^^scripted. 
 
-All formatting options work the same way, just surround your text a few special characters \endash two before and two after. In the case of bold it looks something like this: \**an example of bold text**. Here is the complete list of text styling:
+All formatting options work the same way, just surround your text a few special characters endash two before and two after. In the case of bold it looks something like this: **an example of bold text**. Here is the complete list of text styling:
 ---------- code -------------------------
 Bold text:      **bold**
 Italic:         //italic//
@@ -31,18 +31,18 @@ Subscripted:    __subscripted__
 Also note that unlike in some other markup language you are fully able high==light== only parts of a single word. It is of course also possible to ==style **multiple** words== or whole paragraphs.
 
 ### Special symbols and escapes characters
-If you for some reason want to write say multiple forwardslashes or asterisks without it beeing seen as special \lambdanote syntax you can use an escape character. Just add a backlash before \\\**this will not be bold**.
+If you for some reason want to write say multiple forwardslashes or asterisks without it beeing seen as special lambdanote syntax you can use an escape character. Just add a backlash before **this will not be bold**.
 
-There are also a number of useful built-in special characters that also begin with a backslash. This includes greek letters like \lambda and \Omega as well as arrows like \Right and \up. The whole list includes all greek letters using the same name conventions as in LaTeX and these extra characters:
+There are also a number of useful built-in special characters that also begin with a backslash. This includes greek letters like lambda and Omega as well as arrows like Right and up. The whole list includes all greek letters using the same name conventions as in LaTeX and these extra characters:
 ------- code ------------------------
-\alpha  \beta   \gamma  \Gamma etc...
+alpha  beta   gamma  Gamma etc...
 
-\endash \emdash
-\right  \Right
-\left   \Left
-\up     \Up
-\down   \Down
-\*  \^  \_  \/  \\  \=  \~  \|  \:
+endash emdash
+right  Right
+left   Left
+up     Up
+down   Down
+*  ^  _  /    =  ~  |  :
 --------------------------------------
 ## Headings
 To add a bit of structure to your document it might be a good idea to add a few headings. To create a heading, start a line with one or more hashtags. Subheadings of different levels are created by using more hashtags.
@@ -72,7 +72,7 @@ To provide additonal information about the document you can add metadata fields
 Extension expressions allow you to you do more powerful things in a
 
 ### Math
-The math extension allows you to typeset math using LaTeX syntax. This extension works both inline and as a block (what LaTeX would call \begin{equation}).
+The math extension allows you to typeset math using LaTeX syntax. This extension works both inline and as a block (what LaTeX would call begin{equation}).
 ---- code --------
 |math, E = mc^2 |
 ------------------
@@ -81,16 +81,16 @@ This would output: |math, E = mc^2 |.
 A bit more advanced block example.
 -------------------------- code
 ---- math
-\varphi (n)=n\prod _{j=1}^{r}\left(1-{\frac {1}{p_{j}}}\right)
+varphi (n)=nprod _{j=1}^{r}left(1-{frac {1}{p_{j}}}right)
 ----
 -------------------------------
 Which outputs the following equation.
 ---- math
-\varphi (n)=n\prod _{j=1}^{r}\left(1-{\frac {1}{p_{j}}}\right)
+varphi (n)=nprod _{j=1}^{r}left(1-{frac {1}{p_{j}}}right)
 ----
 
 ### Code
-The code extension is used to add code to your document without it getting parsed as \lambdanote syntax as well as adding nice syntax highlighting to your code.
+The code extension is used to add code to your document without it getting parsed as lambdanote syntax as well as adding nice syntax highlighting to your code.
 
 The code extension can be used both inline and as a block.
 ---- code --------
@@ -160,7 +160,7 @@ If you want to change the color of links, you can do so by setting the metadata 
 |alias, math, m|
 ----
 
-**Conditional** allows you to only include a piece of \lambdanote code if certaint conditions are met.
+**Conditional** allows you to only include a piece of lambdanote code if certaint conditions are met.
 ------- code
 ---- conditional, platform = windows
 This will only be seen if the 
@@ -188,8 +188,10 @@ document is compiled on a windows computer.
 **raw** hej hej
 
 # Exporting your document
-\lambdanote has built-in support for HTML (web) and LaTeX output. However, if you have the tool pandoc installed this editor will automatically allow you to output in a few other formats such as PDF, Markdown, Word and Powerpoint files.
+lambdanote has built-in support for HTML (web) and LaTeX output. However, if you have the tool pandoc installed this editor will automatically allow you to output in a few other formats such as PDF, Markdown, Word and Powerpoint files.
 
 # Other resources
-|link, https://github.com/adelhult/lambda-note, Link to \lambdanote source code repository|
+|link, https://github.com/adelhult/lambda-note, Link to lambdanote source code repository|
 `;
+
+export default guideText;

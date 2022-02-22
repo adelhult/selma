@@ -1,81 +1,43 @@
 
 .Menu nav {
-    padding:0;
-    margin:0;
-    height:2.5rem;
-    padding-left:0.5rem;
-    padding-right:0.5rem;
-    background: #f9f5f1;
-    align-items: center;
-    width:100%;
-    box-sizing: border-box;
-    justify-content: space-between;
-    display: flex;
-    border-bottom:solid 1px #B3B3B3;
+  padding:0;
+  margin:0;
+  height:2.5rem;
+  padding-left:0.5rem;
+  padding-right:0.5rem;
+  background: #f9f5f1;
+  align-items: center;
+  width:100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+  display: flex;
+  border-bottom:solid 1px #B3B3B3;
 }
 
 .Menu .mainActions {
-    display: flex;
+  display: flex;
 }
 
 .Menu .viewModeActions {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
   
 .Menu nav button {
-    padding:0.4rem;
-    font-size:0.9rem;
-    background:none;
-    color:hsl(0, 0%, 20%);
-    margin-right:0.2rem;
-    margin-left:0.2rem;
-    border-radius: 0.3rem;
-    transition: all 0.3s;
-    cursor: pointer;
-    position: relative;
-    animation: appear 0.2s;
-    border:none;
+  animation: appear 0.2s;
 }
   
 .Menu nav .selected {
-    background:rgba(0, 0, 0, 0.062);
+  background:rgba(0, 0, 0, 0.062);
 }
   
 .Menu nav .material-icons {
-    color:hsl(0, 0%, 20%);
-    font-size:1rem;
+  color:hsl(0, 0%, 20%);
+  font-size:1rem;
 }
-  
-.Menu nav button:hover {
-    background:rgba(0, 0, 0, 0.062);
-}
-  
-  
+
+ 
 .Menu .viewModeSelector {
-    padding:0.5rem;
-    max-width: 15rem;
+  padding:0.5rem;
+  max-width: 15rem;
 }
-  
-.debugger {
-    background:#1C3144;
-    color:white;
-    font-size: 90%;
-    box-sizing: border-box;
-    padding:1rem;
-}
-  
-  .debugger ul {
-    margin:0;
-  }
-  
-  @keyframes appear {
-    0% {
-      bottom:20px;
-      opacity: 0;
-    }
-  
-    100% {
-      bottom:0;
-    }
-  }
