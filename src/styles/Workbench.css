@@ -40,15 +40,38 @@
 
 
 .Workbench .actions {
-    right: 0.5rem;
-    top:0.5rem;
+    right: 1rem;
+    bottom:0.5rem;
     position: absolute;
+    z-index:1500;
 }
 
 .Workbench .actions button {
     padding:0.4rem;
-    font-size:0.9rem;
     background:none;
-    border:none;
+    transition: all 0.1s;
+    line-height:0;
+}
+
+.Workbench .actions button:hover {
+    background:rgba(0, 0, 0, 0.062);
+}
+
+.Workbench .actions .material-icons-outlined, .Workbench .actions .material-icons {
+    font-size: 1rem;
+}
+
+.Workbench .Issues {
+    position: absolute;
+    bottom:0;
+    z-index:1000;
+    background:white;
+    width:100%;
+    max-height:40vh;
+    overflow: auto;
+    box-sizing: border-box;
+    padding:1rem;
+    border-bottom: solid 1px #b3b3b3;
+    box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.144);
 }
 

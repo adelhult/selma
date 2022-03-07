@@ -126,7 +126,7 @@ export default function Editor(props) {
         <MonacoEditor
             height="100%"
             width="100%"
-            theme="myCoolTheme"
+            theme="editortheme"
             defaultValue={props.readSource}
             language="lambdanote"
             beforeMount={monaco => configureEditor(monaco, props.extensionsInfoRef)}
