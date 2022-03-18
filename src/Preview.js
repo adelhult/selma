@@ -1,6 +1,5 @@
 import "./styles/Preview.css";
 import { useEffect } from "react";
-import { invoke } from '@tauri-apps/api';
 
 /**
  * The preview panel which displays the output of the lambda note translator.

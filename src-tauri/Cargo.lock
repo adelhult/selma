@@ -1743,7 +1743,7 @@ dependencies = [
 [[package]]
 name = "lambda_note_lib"
 version = "0.1.0"
-source = "git+https://github.com/adelhult/lambda-note#12bcfa8b65cbcf0c58cd9f9e5b7de2f7114f4047"
+source = "git+https://github.com/adelhult/lambda-note#289d1799b049f9f9bacf15313b1e4d4e7bca90a8"
 dependencies = [
  "evalexpr",
  "latex2mathml",

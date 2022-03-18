@@ -1,9 +1,6 @@
 import "./styles/Menu.css";
-import { useState } from "react";
-import Settings from "./Settings.js";
 
 export default function Menu(props) {
-    const [settingsOpen, setSettingsOpen] = useState(false);
     return <div className="Menu">
         <nav>
             <div className="mainActions">
@@ -12,7 +9,11 @@ export default function Menu(props) {
                 <button onClick={props.actions.onSave}>💾 Save</button>
                 <button onClick={props.actions.onSaveAs}>📑 Save As</button>
                 <button onClick={props.actions.onExport}>🚀 Export</button>
-                <button onClick={setSettingsOpen}>⚙️ Settings</button>
+                <button 
+                    className={props.showSettings ? "active" : null} 
+                    onClick={props.actions.onSettings}>
+                        ⚙️ Settings
+                </button>
             </div>
             <div className="viewModeActions">
                 <button
@@ -32,6 +33,5 @@ export default function Menu(props) {
                 </button>
             </div>
         </nav>
-        {settingsOpen && <Settings />}
     </div>
 }

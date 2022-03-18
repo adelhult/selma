@@ -5,6 +5,7 @@ import { getConfig, saveConfig, getGuidePath } from './config.js';
 import { appWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api';
 import Menu from "./Menu.js";
+import Settings from "./Settings.js";
 import Help from "./Help.js";
 import './styles/App.css';
 
@@ -19,6 +20,7 @@ class App extends Component {
 			"onFocus": this.toggleFocusMode.bind(this),
 			"onSaveAs": this.handleSaveAsFile.bind(this),
 			"onViewToggle": this.toggleViewMode.bind(this),
+			"onSettings": this.toggleSettings.bind(this),
 		};
 
 		this.state = {
@@ -66,6 +68,10 @@ class App extends Component {
 
 	toggleFocusMode(e) {
 		this.setState({ focusMode: !this.state.focusMode });
+	}
+
+	toggleSettings() {
+		this.setState({ showSettings: !this.state.showSettings });
 	}
 
 	toggleViewMode() {
@@ -211,6 +217,7 @@ class App extends Component {
 			{this.state.loaded ? <div className="App">
 				{!this.shouldMenusBeHidden() &&
 					<Menu
+						showSettings={this.state.showSettings}
 						filename={this.state.filename}
 						actions={this.actions}
 						debug={this.state.debug}
@@ -233,6 +240,8 @@ class App extends Component {
 						onGuide={this.openGuide.bind(this)}
 					/>
 
+					: this.state.showSettings ? 
+						<Settings />
 					: <Workbench
 						safeMode={this.state.safeMode}
 						filename={this.state.filename}

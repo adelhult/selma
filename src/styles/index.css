@@ -86,6 +86,10 @@ button:hover {
   background:rgba(0, 0, 0, 0.062);
 }
 
+.active {
+  background:rgba(0, 0, 0, 0.062);
+}
+
 @keyframes appear {
   0% {
     bottom:20px;

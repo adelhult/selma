@@ -25,6 +25,8 @@
   
 .Menu nav button {
   animation: appear 0.2s;
+  display: flex;
+  line-height: 1;
 }
   
 .Menu nav .selected {
