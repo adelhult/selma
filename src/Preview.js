@@ -23,7 +23,7 @@ export default function Preview(props) {
         // which we sadly are not able to access due to cross origin issues. 
         // To solve this we use the postMessage API
         // thanks, https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
-        frame.contentWindow.postMessage("reload", "*")
+        setTimeout(() => frame.contentWindow.postMessage("reload", "*"), 100);
     }, [source]);
 
     return props.configDir ? <div className="Preview">
