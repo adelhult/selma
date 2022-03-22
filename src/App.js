@@ -107,6 +107,10 @@ class App extends Component {
 		this.setState({ debug: debug });
 	}
 
+	setTheme(theme) {
+		this.setState({ currentTheme: theme });
+	}z
+
 	handleOpenFile(event) {
 		open({
 			multiple: false,
@@ -239,10 +243,14 @@ class App extends Component {
 						}}
 						onGuide={this.openGuide.bind(this)}
 					/>
-
 					: this.state.showSettings ? 
-						<Settings />
+						<Settings 
+							currentTheme={this.state.currentTheme}
+							onThemeChange={this.setTheme.bind(this)}
+							themes={this.state.themes}
+						/>
 					: <Workbench
+						currentTheme={this.state.currentTheme}
 						safeMode={this.state.safeMode}
 						filename={this.state.filename}
 						actions={this.actions}
@@ -251,7 +259,7 @@ class App extends Component {
 						onEditorChange={this.handleEditorChange.bind(this)}
 						mode={this.state.viewMode}
 						configDir={this.state.configDir}
-					/>
+					/> 
 				}
 			</div> : null}
 		</>;

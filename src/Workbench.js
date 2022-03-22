@@ -19,6 +19,7 @@ export default function Workbench(props) {
     const [errors, setErrors] = useState([]);
     const [isIssuesOpen, setIsIssuesOpen] = useState(false);
     const [previewSource, setPreviewSource] = useState("");
+    const [documentTemplate, setDocumentTemplate] = useState();
     const sourceRef = props.sourceRef
 
     const setExtensionsInfo = (info) => extensionsInfoRef.current = info;
@@ -52,18 +53,29 @@ export default function Workbench(props) {
 
     }, [props.filename, sourceRef]);
 
+    // reload the document template string every time
+    // the theme changes
+    useEffect(() => {
+        invoke('read_file', { "path": props.currentTheme })
+            .then(setDocumentTemplate)
+            .catch(console.error);
+    }, [props.currentTheme]);
+
     // if we set a new preview source, use it and compile the documents
     useEffect(() => {
-        if (!props.configDir) return;
+        console.log("in translation function")
+        console.log({template: documentTemplate, dir: props.configDir})
+        if (!props.configDir || !documentTemplate) return;
         
         const preview_filepath = props.configDir + "preview.html";
         const server_url = "http://localhost:5432/";
         const root_dir_path = (props.filename ?? "").split(/[\\/]/).slice(0, -1).join("/");
         const url_param = "?root=" + encodeURIComponent(root_dir_path);
         const preview_url = server_url + preview_filepath + url_param;
-
+        console.log("translating!");
         invoke('translate_preview', { 
             'source': previewSource, 
+            'template': documentTemplate,
             'filepath': preview_filepath,
             'safe': props.safeMode ?? true,
         })
@@ -76,8 +88,9 @@ export default function Workbench(props) {
                 setErrors(issues.errors);
                 setWarnings(issues.warnings);
 
-            });
-    }, [previewSource]);
+            })
+            .catch(console.error);
+    }, [previewSource, documentTemplate]);
 
     useEffect(handleUpdate, [props.viewMode]);
 
@@ -91,6 +104,7 @@ export default function Workbench(props) {
     />;
 
     const preview = <Preview
+        theme={props.currentTheme}
         setExtensionsInfo={setExtensionsInfo}
         safeMode={props.safeMode}
         setWarnings={setWarnings}

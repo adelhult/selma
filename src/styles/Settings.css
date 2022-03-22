@@ -2,3 +2,18 @@
     box-sizing: border-box;
     padding:1rem;
 }
+
+.Settings .path:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.Settings .Theme {
+    margin-top:1rem;
+    margin-bottom:2rem;
+}
+
+.Settings .Theme .description {
+    max-width:500px;
+    margin-bottom:1rem;
+}

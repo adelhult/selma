@@ -24,7 +24,7 @@ export default function Preview(props) {
         // To solve this we use the postMessage API
         // thanks, https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
         setTimeout(() => frame.contentWindow.postMessage("reload", "*"), 100);
-    }, [source]);
+    }, [source, props.theme]);
 
     return props.configDir ? <div className="Preview">
         <iframe id="previewFrame" title="preview" src={preview_url}>

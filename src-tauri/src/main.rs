@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use lambda_note_lib::{DocumentState, Html, Latex, Translator, WebPreview};
+use lambda_note_lib::{DocumentState, Html, Latex, Translator, HtmlTemplate};
 use rouille::{start_server, Response};
 use std::fs::File;
 use std::{
@@ -15,7 +15,7 @@ use std::{
 };
 use tauri::command;
 use tauri::Manager;
-use tauri_plugin_shadows::Shadows;
+use window_shadows::set_shadow;
 use path_clean::PathClean;
 
 fn translate<T: Translator + 'static>(source: &str, filename: &Path, translator: T) {
@@ -99,8 +99,9 @@ fn get_extension_info(doc: &DocumentState) -> Vec<ExtensionInfo> {
 }
 
 #[command]
-fn translate_preview(source: &str, filepath: &str, safe: bool) -> (Issues, Vec<ExtensionInfo>) {
-  let (output, doc) = translate_str(source, WebPreview::new(), safe);
+fn translate_preview(source: &str, filepath: &str, template: &str, safe: bool) -> (Issues, Vec<ExtensionInfo>) {
+  let translator = HtmlTemplate::new(template, true);
+  let (output, doc) = translate_str(source, translator, safe);
   let extensions_info = get_extension_info(&doc);
 
   let mut issues = Issues {
@@ -115,6 +116,12 @@ fn translate_preview(source: &str, filepath: &str, safe: bool) -> (Issues, Vec<E
   }
 
   (issues, extensions_info)
+}
+
+#[command]
+fn open_editor(filename: &str) {
+  let path = filename.to_string();
+  thread::spawn(|| edit::edit_file(path));
 }
 
 #[command]
@@ -203,10 +210,10 @@ fn main() {
   tauri::Builder::default()
     .setup(|app| {
       let window = app.get_window("main").expect("Failed to get window ");
-      window.set_shadow(true);
+      set_shadow(&window, true).unwrap();
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![read_file, write_file, export, translate_preview, create_dir])
+    .invoke_handler(tauri::generate_handler![open_editor, read_file, write_file, export, translate_preview, create_dir])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
