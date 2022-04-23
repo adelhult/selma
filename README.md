@@ -17,9 +17,12 @@ npm run tauri build
 ```
 
 ## TODOs
-- [ ] Syntax highlighting
-- [ ] Hover suggestions
-- [ ] File tree
-- [ ] Settings menu
-- [x] Remember the previous opened file etc.
-- [ ] Nicer GUI
+There are a lot of things that could be worked on, most notably, a complete rewrite of state
+management (it is currently quite messy) and vault/workspace-like feature with a file tree.
+But I intend to at least finish the following things:
+- [] Fix suggestion duplicate bug
+- [] Improve when suggestions appear
+- [] Better settings menu
+- [] Use the template translator on export
+- [] Complete syntax highlighting
+- [] Intro documentation about λnote
